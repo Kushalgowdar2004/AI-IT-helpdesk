@@ -117,3 +117,8 @@ Implemented
  Swagger API documentation
  Netlify frontend deployment
  Render backend deployment
+ FastAPI backend
+ REST APIs
+ Swagger API documentation
+ Netlify frontend deployment
+ Render backend deployment
