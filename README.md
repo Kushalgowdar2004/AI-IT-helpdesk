@@ -3,34 +3,7 @@
 A responsive employee helpdesk portal backed by FastAPI, SQLAlchemy, SQLite, TF-IDF/cosine RAG, and a deterministic local assistant. Anthropic is optional and disabled by default.
 
 ## Run on Windows
-AI_IT_Helpdesk_Improved/
-│
-├── .gitignore
-├── .python-version
-├── README.md
-│
-├── backend/
-│   │
-│   ├── requirements.txt
-│   │
-│   └── app/
-│       │
-│       ├── __init__.py
-│       ├── main.py
-│       ├── models.py
-│       ├── schemas.py
-│       ├── database.py
-│       │
-│       ├── ai_pipeline.py
-│       ├── rag.py
-│       ├── seed_kb.py
-│       │
-│       └── knowledge_base/
-│           └── *.md
-│
-└── frontend/
-    │
-    └── index.html
+  
 ### Backend
 ```powershell
 cd backend
@@ -45,7 +18,7 @@ main.py
 
 Main FastAPI application.
 
-It provides API endpoints for:
+* It provides API endpoints for:
 
 Health checking
 Knowledge-base articles
@@ -61,7 +34,7 @@ models.py
 
 Contains SQLAlchemy database models for the application's persistent data.
 
-The database stores information such as:
+* The database stores information such as:
 
 Tickets
 Knowledge-base articles
@@ -72,7 +45,7 @@ Contains Pydantic request and response schemas used to validate API requests and
 
 database.py
 
-Handles:
+* Handles:
 
 SQLite database configuration
 SQLAlchemy engine
@@ -80,7 +53,7 @@ Database sessions
 Database dependencies
 ai_pipeline.py
 
-Contains the AI processing pipeline used for:
+* Contains the AI processing pipeline used for:
 
 Ticket analysis
 Categorization
