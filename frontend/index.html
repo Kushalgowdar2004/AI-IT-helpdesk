@@ -1,0 +1,3032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI IT Helpdesk</title>
+
+<style>
+/* =========================================================
+   RESET
+========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #f4f7fb;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+    --sidebar: #0b1728;
+    --sidebar-hover: #14243a;
+
+    --primary: #1769e0;
+    --primary-dark: #0f4fac;
+    --primary-soft: #eaf2ff;
+
+    --teal: #0f9d8a;
+    --green: #16a34a;
+    --green-soft: #eaf8ef;
+
+    --orange: #f59e0b;
+    --orange-soft: #fff7e6;
+
+    --red: #dc3545;
+    --red-soft: #fff0f1;
+
+    --text: #172033;
+    --text-secondary: #64748b;
+    --border: #e2e8f0;
+
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+    --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+
+    --radius: 16px;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: var(--sidebar);
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease;
+}
+
+.logo {
+    padding: 28px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #2388ff, #16b8a0);
+    font-size: 22px;
+}
+
+.logo h1 {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.logo p {
+    color: #91a3bd;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.nav {
+    padding: 22px 13px;
+    flex: 1;
+}
+
+.nav-label {
+    color: #6f829d;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 13px 10px;
+}
+
+.nav-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #aebdd1;
+    padding: 13px 14px;
+    margin-bottom: 5px;
+    border-radius: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    transition: 0.2s;
+}
+
+.nav-item:hover {
+    background: var(--sidebar-hover);
+    color: white;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #1769e0, #155ac0);
+    color: white;
+    box-shadow: 0 7px 18px rgba(23,105,224,0.25);
+}
+
+.nav-icon {
+    width: 22px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.sidebar-footer {
+    padding: 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.system-status {
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 13px;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 12px;
+    color: #b9c6d7;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    background: #27d17f;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(39,209,127,0.1);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+    width: calc(100% - 250px);
+}
+
+.topbar {
+    height: 76px;
+    background: rgba(255,255,255,0.96);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 34px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+}
+
+.mobile-menu {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 3px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.api-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: var(--green-soft);
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: white;
+    background: linear-gradient(135deg, #1769e0, #0f9d8a);
+    font-weight: 800;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content {
+    padding: 30px 34px 50px;
+    max-width: 1700px;
+    margin: auto;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    background:
+        radial-gradient(circle at 85% 20%, rgba(45,140,255,0.32), transparent 32%),
+        linear-gradient(135deg, #0e3e79, #1769e0 55%, #0e8d86);
+    border-radius: 22px;
+    padding: 34px;
+    color: white;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    right: 80px;
+    top: -110px;
+}
+
+.hero h2 {
+    font-size: 30px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    max-width: 700px;
+    color: rgba(255,255,255,0.82);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 11px;
+    margin-top: 22px;
+}
+
+.btn {
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-white {
+    background: white;
+    color: #1254a7;
+}
+
+.btn-white:hover {
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: var(--red);
+    color: white;
+}
+
+.btn-secondary {
+    background: #eef2f7;
+    color: var(--text);
+}
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 21px;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat-icon {
+    width: 39px;
+    height: 39px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+}
+
+.stat-number {
+    font-size: 29px;
+    font-weight: 850;
+    margin-top: 12px;
+}
+
+.stat-description {
+    color: #8a97a8;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+    padding: 21px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.card-header h3 {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.card-header p {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.card-body {
+    padding: 22px;
+}
+
+/* =========================================================
+   DASHBOARD GRID
+========================================================= */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 22px;
+}
+
+/* =========================================================
+   TICKET LIST
+========================================================= */
+
+.ticket-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-row {
+    padding: 19px 22px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: 0.18s;
+}
+
+.ticket-row:hover {
+    background: #f8fbff;
+}
+
+.ticket-row:last-child {
+    border-bottom: none;
+}
+
+.ticket-main {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.ticket-title {
+    font-size: 15px;
+    font-weight: 750;
+    color: #162238;
+}
+
+.ticket-id {
+    font-size: 12px;
+    color: #8491a3;
+    margin-top: 5px;
+}
+
+.ticket-description {
+    font-size: 13px;
+    color: #617086;
+    margin-top: 8px;
+    line-height: 1.55;
+}
+
+.ticket-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.badge-open {
+    background: #eaf2ff;
+    color: #1769e0;
+}
+
+.badge-resolved {
+    background: #eaf8ef;
+    color: #16803d;
+}
+
+.badge-escalated {
+    background: #fff0f1;
+    color: #c62838;
+}
+
+.badge-high {
+    background: #fff0f1;
+    color: #c62838;
+}
+
+.badge-medium {
+    background: #fff7e6;
+    color: #a16207;
+}
+
+.badge-low {
+    background: #eaf8ef;
+    color: #16803d;
+}
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 240px;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 13px 15px 13px 42px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    font-size: 14px;
+    outline: none;
+    background: white;
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(23,105,224,0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 12px;
+    color: #8b98a9;
+}
+
+select,
+input,
+textarea {
+    font-family: inherit;
+}
+
+.filter-select {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 12px 14px;
+    background: white;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+}
+
+/* =========================================================
+   FORMS
+========================================================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 19px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 750;
+    margin-bottom: 8px;
+}
+
+.form-label span {
+    color: #e05252;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    border: 1px solid #d8e0ea;
+    border-radius: 11px;
+    padding: 13px 14px;
+    font-size: 14px;
+    color: var(--text);
+    background: white;
+    outline: none;
+    transition: 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(23,105,224,0.1);
+}
+
+.form-textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.form-help {
+    font-size: 12px;
+    color: #8491a3;
+    margin-top: 6px;
+}
+
+/* =========================================================
+   AI ASSISTANT
+========================================================= */
+
+.chat-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    height: calc(100vh - 140px);
+    min-height: 650px;
+}
+
+.chat-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 19px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.assistant-info {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.assistant-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1769e0, #0f9d8a);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+}
+
+.assistant-name {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.assistant-status {
+    font-size: 12px;
+    color: #16a34a;
+    margin-top: 3px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px;
+    background: #f8fafc;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 20px;
+    max-width: 82%;
+}
+
+.message.user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-right: 10px;
+    background: #e6efff;
+    color: #1769e0;
+    font-size: 14px;
+}
+
+.message.user .message-avatar {
+    margin-right: 0;
+    margin-left: 10px;
+    background: #1769e0;
+    color: white;
+}
+
+.message-bubble {
+    padding: 14px 17px;
+    border-radius: 15px;
+    background: white;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    line-height: 1.65;
+    color: #344155;
+    box-shadow: 0 2px 5px rgba(15,23,42,0.03);
+    white-space: pre-wrap;
+}
+
+.message.user .message-bubble {
+    background: #1769e0;
+    border-color: #1769e0;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message:not(.user) .message-bubble {
+    border-bottom-left-radius: 4px;
+}
+
+.chat-input-area {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid var(--border);
+}
+
+.chat-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 15px;
+    font-size: 14px;
+    outline: none;
+}
+
+.chat-input:focus {
+    border-color: var(--primary);
+}
+
+.send-btn {
+    width: 50px;
+    border: none;
+    border-radius: 12px;
+    background: var(--primary);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.send-btn:hover {
+    background: var(--primary-dark);
+}
+
+.suggestions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.suggestion {
+    border: 1px solid var(--border);
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 7px 11px;
+    font-size: 11px;
+    color: #526175;
+    cursor: pointer;
+}
+
+.suggestion:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-color: #bcd3fa;
+}
+
+/* =========================================================
+   AI SIDEBAR
+========================================================= */
+
+.ai-help-card {
+    padding: 20px;
+}
+
+.ai-help-card h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.ai-capability {
+    display: flex;
+    gap: 11px;
+    margin-bottom: 16px;
+}
+
+.capability-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.ai-capability strong {
+    font-size: 13px;
+}
+
+.ai-capability p {
+    color: var(--text-secondary);
+    font-size: 11px;
+    line-height: 1.5;
+    margin-top: 3px;
+}
+
+/* =========================================================
+   KNOWLEDGE BASE
+========================================================= */
+
+.kb-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.kb-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: 0.2s;
+}
+
+.kb-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.kb-id {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.kb-card h3 {
+    font-size: 16px;
+    margin: 9px 0;
+    line-height: 1.35;
+}
+
+.kb-card p {
+    color: #657287;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.kb-category {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 5px 9px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 15px;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal {
+    width: min(720px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 70px rgba(15,23,42,0.25);
+}
+
+.modal-header {
+    padding: 21px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.modal-header h2 {
+    font-size: 19px;
+}
+
+.close-btn {
+    border: none;
+    background: #f1f5f9;
+    width: 35px;
+    height: 35px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.detail-item {
+    background: #f8fafc;
+    padding: 13px;
+    border-radius: 10px;
+}
+
+.detail-label {
+    color: #7b8798;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: .4px;
+}
+
+.detail-value {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.ai-response {
+    margin-top: 20px;
+    background: #eff6ff;
+    border: 1px solid #d5e7ff;
+    border-radius: 13px;
+    padding: 17px;
+}
+
+.ai-response h4 {
+    color: #1458b6;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.ai-response p {
+    color: #40546e;
+    white-space: pre-wrap;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   EMPTY / LOADING
+========================================================= */
+
+.empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #7a8798;
+}
+
+.empty-icon {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.loading {
+    text-align: center;
+    padding: 30px;
+    color: #64748b;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background: #172033;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 11px;
+    box-shadow: var(--shadow);
+    font-size: 13px;
+    display: none;
+    z-index: 5000;
+}
+
+.toast.show {
+    display: block;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kb-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chat-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .chat-card {
+        height: 700px;
+    }
+
+    .ai-help-card {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .mobile-menu {
+        display: block;
+    }
+
+    .topbar {
+        padding: 0 20px;
+    }
+
+    .content {
+        padding: 22px 20px 40px;
+    }
+}
+
+@media (max-width: 650px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid,
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kb-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 25px;
+    }
+
+    .hero h2 {
+        font-size: 24px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .topbar-right .api-status {
+        display: none;
+    }
+
+    .content {
+        padding: 18px 13px 35px;
+    }
+
+    .ticket-main {
+        flex-direction: column;
+    }
+
+    .message {
+        max-width: 95%;
+    }
+
+    .chat-messages {
+        padding: 16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <div class="logo-row">
+            <div class="logo-icon">🤖</div>
+            <div>
+                <h1>IT Helpdesk</h1>
+                <p>AI Support Platform</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav">
+
+        <div class="nav-label">Workspace</div>
+
+        <button class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">▦</span>
+            Dashboard
+        </button>
+
+        <button class="nav-item" data-page="assistant">
+            <span class="nav-icon">✦</span>
+            AI Assistant
+        </button>
+
+        <button class="nav-item" data-page="tickets">
+            <span class="nav-icon">▤</span>
+            Tickets
+        </button>
+
+        <button class="nav-item" data-page="submit">
+            <span class="nav-icon">＋</span>
+            Submit Ticket
+        </button>
+
+        <button class="nav-item" data-page="knowledge">
+            <span class="nav-icon">▧</span>
+            Knowledge Base
+        </button>
+
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="system-status">
+            <div class="status-row">
+                <span class="status-dot"></span>
+                <span>AI Helpdesk Online</span>
+            </div>
+        </div>
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div style="display:flex;align-items:center;gap:15px;">
+
+            <button class="mobile-menu" id="mobileMenu">
+                ☰
+            </button>
+
+            <div>
+                <div class="page-title" id="pageTitle">
+                    Dashboard
+                </div>
+
+                <div class="page-subtitle" id="pageSubtitle">
+                    IT support overview and system activity
+                </div>
+            </div>
+
+        </div>
+
+        <div class="topbar-right">
+
+            <div class="api-status">
+                <span class="status-dot"></span>
+                System Online
+            </div>
+
+            <div class="user-avatar">
+                KG
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <div class="content">
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section class="page active" id="page-dashboard">
+
+    <div class="hero">
+
+        <h2>Welcome to AI IT Helpdesk 👋</h2>
+
+        <p>
+            Get instant IT assistance, troubleshoot common issues,
+            search the knowledge base, and create support tickets
+            when you need human assistance.
+        </p>
+
+        <div class="hero-actions">
+
+            <button class="btn btn-white" onclick="showPage('assistant')">
+                ✦ Ask AI Assistant
+            </button>
+
+            <button class="btn btn-white" onclick="showPage('submit')">
+                ＋ Submit Ticket
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Total Tickets</span>
+                <div class="stat-icon" style="background:#eaf2ff;color:#1769e0;">
+                    ▤
+                </div>
+            </div>
+            <div class="stat-number" id="statTotal">—</div>
+            <div class="stat-description">All submitted tickets</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Open</span>
+                <div class="stat-icon" style="background:#fff7e6;color:#d97706;">
+                    ◷
+                </div>
+            </div>
+            <div class="stat-number" id="statOpen">—</div>
+            <div class="stat-description">Awaiting resolution</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Resolved</span>
+                <div class="stat-icon" style="background:#eaf8ef;color:#16a34a;">
+                    ✓
+                </div>
+            </div>
+            <div class="stat-number" id="statResolved">—</div>
+            <div class="stat-description">Successfully resolved</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <span class="stat-label">Escalated</span>
+                <div class="stat-icon" style="background:#fff0f1;color:#dc3545;">
+                    ↑
+                </div>
+            </div>
+            <div class="stat-number" id="statEscalated">—</div>
+            <div class="stat-description">Requires human support</div>
+        </div>
+
+    </div>
+
+
+    <div class="dashboard-grid">
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <h3>Recent Tickets</h3>
+                    <p>Latest support activity</p>
+                </div>
+
+                <button class="btn btn-secondary" onclick="showPage('tickets')">
+                    View All
+                </button>
+
+            </div>
+
+            <div id="recentTickets" class="ticket-list">
+                <div class="loading">
+                    Loading tickets...
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <div>
+                    <h3>Ticket Categories</h3>
+                    <p>Current support distribution</p>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div id="categoryChart">
+                    <div class="loading">
+                        Loading metrics...
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     AI ASSISTANT
+===================================================== -->
+
+<section class="page" id="page-assistant">
+
+    <div class="chat-layout">
+
+        <div class="card chat-card">
+
+            <div class="chat-header">
+
+                <div class="assistant-info">
+
+                    <div class="assistant-avatar">
+                        ✦
+                    </div>
+
+                    <div>
+                        <div class="assistant-name">
+                            AI IT Assistant
+                        </div>
+
+                        <div class="assistant-status">
+                            ● Ready to help
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="btn btn-secondary" onclick="newChat()">
+                    + New Chat
+                </button>
+
+            </div>
+
+
+            <div class="chat-messages" id="chatMessages">
+
+                <div class="message">
+
+                    <div class="message-avatar">
+                        ✦
+                    </div>
+
+                    <div class="message-bubble">
+                        <strong>Hi! I'm your IT Helpdesk Assistant.</strong><br><br>
+
+                        Tell me what's wrong with your laptop, network,
+                        software, account, email, printer, Teams, or another
+                        IT service. I'll search the knowledge base and guide
+                        you through the next steps.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="chat-input-area">
+
+                <div class="suggestions">
+
+                    <button class="suggestion"
+                            onclick="useSuggestion('My VPN keeps disconnecting')">
+                        VPN issue
+                    </button>
+
+                    <button class="suggestion"
+                            onclick="useSuggestion('My laptop is very slow')">
+                        Slow laptop
+                    </button>
+
+                    <button class="suggestion"
+                            onclick="useSuggestion('My external monitor is not detected')">
+                        Monitor issue
+                    </button>
+
+                    <button class="suggestion"
+                            onclick="useSuggestion('My account is locked')">
+                        Account locked
+                    </button>
+
+                </div>
+
+                <div class="chat-input-row">
+
+                    <input
+                        id="chatInput"
+                        class="chat-input"
+                        placeholder="Describe your IT issue..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        id="sendButton"
+                        class="send-btn"
+                        onclick="sendMessage()">
+                        ➤
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card ai-help-card">
+
+            <h3>What I can help with</h3>
+
+            <div class="ai-capability">
+
+                <div class="capability-icon">🌐</div>
+
+                <div>
+                    <strong>Network & VPN</strong>
+                    <p>
+                        Wi-Fi, VPN, DNS, internet and connectivity problems.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ai-capability">
+
+                <div class="capability-icon">💻</div>
+
+                <div>
+                    <strong>Hardware</strong>
+                    <p>
+                        Laptop, monitor, printer, battery and peripheral issues.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ai-capability">
+
+                <div class="capability-icon">🔐</div>
+
+                <div>
+                    <strong>Accounts & Access</strong>
+                    <p>
+                        Password, MFA, locked accounts and permissions.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ai-capability">
+
+                <div class="capability-icon">📧</div>
+
+                <div>
+                    <strong>Email & Collaboration</strong>
+                    <p>
+                        Outlook, Teams, meetings and email problems.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ai-capability">
+
+                <div class="capability-icon">🛡️</div>
+
+                <div>
+                    <strong>Security</strong>
+                    <p>
+                        Suspicious emails, phishing and security incidents.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TICKETS
+===================================================== -->
+
+<section class="page" id="page-tickets">
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+                <h3>Ticket Management</h3>
+                <p>Monitor, search and manage IT support requests</p>
+            </div>
+
+            <button class="btn btn-primary" onclick="showPage('submit')">
+                + New Ticket
+            </button>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="filters">
+
+                <div class="search-box">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        id="ticketSearch"
+                        placeholder="Search tickets by title, description or ID..."
+                        oninput="filterTickets()"
+                    >
+
+                </div>
+
+                <select
+                    class="filter-select"
+                    id="statusFilter"
+                    onchange="filterTickets()">
+
+                    <option value="">All Statuses</option>
+                    <option value="Open">Open</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Escalated">Escalated</option>
+
+                </select>
+
+                <select
+                    class="filter-select"
+                    id="priorityFilter"
+                    onchange="filterTickets()">
+
+                    <option value="">All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+
+                </select>
+
+            </div>
+
+            <div id="allTickets" class="ticket-list">
+
+                <div class="loading">
+                    Loading tickets...
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SUBMIT TICKET
+===================================================== -->
+
+<section class="page" id="page-submit">
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+                <h3>Submit IT Support Ticket</h3>
+                <p>
+                    Describe your issue and our AI will automatically
+                    categorize and prioritize it.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <form id="ticketForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Issue Title <span>*</span>
+                        </label>
+
+                        <input
+                            id="ticketTitle"
+                            class="form-input"
+                            required
+                            placeholder="Example: VPN keeps disconnecting"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Department
+                        </label>
+
+                        <select
+                            id="ticketDepartment"
+                            class="form-select">
+
+                            <option>Engineering</option>
+                            <option>Finance</option>
+                            <option>HR</option>
+                            <option>Sales</option>
+                            <option>Operations</option>
+                            <option>Marketing</option>
+                            <option>IT</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Device
+                        </label>
+
+                        <select
+                            id="ticketDevice"
+                            class="form-select">
+
+                            <option>Company Laptop - Windows</option>
+                            <option>Company Laptop - macOS</option>
+                            <option>Desktop PC</option>
+                            <option>Mobile Device</option>
+                            <option>Other</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Priority
+                        </label>
+
+                        <select
+                            id="ticketPriority"
+                            class="form-select">
+
+                            <option value="Auto">AI Determine</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label class="form-label">
+                            Describe the Issue <span>*</span>
+                        </label>
+
+                        <textarea
+                            id="ticketDescription"
+                            class="form-textarea"
+                            required
+                            placeholder="Describe what happened, when it started, what you have already tried, and any error messages..."
+                        ></textarea>
+
+                        <div class="form-help">
+                            More detail helps the AI find the most relevant knowledge-base solution.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px;">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="document.getElementById('ticketForm').reset()">
+                        Clear
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+                        Submit Ticket
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     KNOWLEDGE BASE
+===================================================== -->
+
+<section class="page" id="page-knowledge">
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+                <h3>Knowledge Base</h3>
+                <p>IT troubleshooting articles used by the AI assistant</p>
+            </div>
+
+            <div class="search-box" style="max-width:330px;">
+                <span class="search-icon">⌕</span>
+
+                <input
+                    id="kbSearch"
+                    placeholder="Search knowledge base..."
+                    oninput="filterKB()"
+                >
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div id="kbGrid" class="kb-grid">
+                <div class="loading">
+                    Loading knowledge base...
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    </div>
+
+</main>
+
+</div>
+
+
+<!-- =====================================================
+     TICKET MODAL
+===================================================== -->
+
+<div class="modal-overlay" id="ticketModal">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2 id="modalTitle">Ticket Details</h2>
+            </div>
+
+            <button
+                class="close-btn"
+                onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const API_BASE = "BACKEND_URL";
+
+let tickets = [];
+let kbArticles = [];
+let chatHistory = [];
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+const pageInfo = {
+
+    dashboard: {
+        title: "Dashboard",
+        subtitle: "IT support overview and system activity"
+    },
+
+    assistant: {
+        title: "AI Assistant",
+        subtitle: "Get instant help with your IT problems"
+    },
+
+    tickets: {
+        title: "Tickets",
+        subtitle: "Manage and monitor IT support requests"
+    },
+
+    submit: {
+        title: "Submit Ticket",
+        subtitle: "Create a new IT support request"
+    },
+
+    knowledge: {
+        title: "Knowledge Base",
+        subtitle: "Browse troubleshooting articles"
+    }
+
+};
+
+
+function showPage(page) {
+
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+    });
+
+    const target = document.getElementById("page-" + page);
+
+    if (target) {
+        target.classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.remove("active");
+    });
+
+    const activeNav = document.querySelector(
+        `.nav-item[data-page="${page}"]`
+    );
+
+    if (activeNav) {
+        activeNav.classList.add("active");
+    }
+
+    document.getElementById("pageTitle").textContent =
+        pageInfo[page]?.title || "AI IT Helpdesk";
+
+    document.getElementById("pageSubtitle").textContent =
+        pageInfo[page]?.subtitle || "";
+
+    document.getElementById("sidebar").classList.remove("open");
+
+    if (page === "tickets") {
+        loadTickets();
+    }
+
+    if (page === "knowledge") {
+        loadKB();
+    }
+
+    if (page === "dashboard") {
+        loadDashboard();
+    }
+}
+
+
+/* Navigation buttons */
+
+document.querySelectorAll(".nav-item").forEach(item => {
+
+    item.addEventListener("click", () => {
+        showPage(item.dataset.page);
+    });
+
+});
+
+
+/* Mobile menu */
+
+document.getElementById("mobileMenu").addEventListener("click", () => {
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+
+});
+
+
+/* =========================================================
+   API
+========================================================= */
+
+async function apiFetch(endpoint, options = {}) {
+
+    const response = await fetch(API_BASE + endpoint, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `API request failed: ${response.status}`
+        );
+    }
+
+    return response.json();
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+async function loadDashboard() {
+
+    try {
+
+        const metrics = await apiFetch("/api/metrics");
+
+        document.getElementById("statTotal").textContent =
+            metrics.total_tickets ?? metrics.total ?? 0;
+
+        document.getElementById("statOpen").textContent =
+            metrics.open ?? 0;
+
+        document.getElementById("statResolved").textContent =
+            metrics.resolved ?? 0;
+
+        document.getElementById("statEscalated").textContent =
+            metrics.escalated ?? 0;
+
+        renderCategoryMetrics(metrics);
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+    await loadTickets(true);
+}
+
+
+function renderCategoryMetrics(metrics) {
+
+    const container = document.getElementById("categoryChart");
+
+    const categories =
+        metrics.categories ||
+        metrics.by_category ||
+        metrics.category_counts ||
+        {};
+
+    const entries = Object.entries(categories);
+
+    if (!entries.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📊</div>
+                <p>No category data available yet.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    const total = entries.reduce(
+        (sum, [, value]) => sum + Number(value || 0),
+        0
+    );
+
+    container.innerHTML = entries
+        .sort((a,b) => Number(b[1]) - Number(a[1]))
+        .map(([name, value]) => {
+
+            const percentage =
+                total ? Math.round((Number(value) / total) * 100) : 0;
+
+            return `
+                <div style="margin-bottom:17px;">
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        font-size:13px;
+                        font-weight:700;
+                        margin-bottom:7px;
+                    ">
+                        <span>${escapeHTML(name)}</span>
+                        <span style="color:#64748b;">
+                            ${value}
+                        </span>
+                    </div>
+
+                    <div style="
+                        height:8px;
+                        background:#edf2f7;
+                        border-radius:20px;
+                        overflow:hidden;
+                    ">
+
+                        <div style="
+                            width:${percentage}%;
+                            height:100%;
+                            background:linear-gradient(90deg,#1769e0,#0f9d8a);
+                            border-radius:20px;
+                        "></div>
+
+                    </div>
+
+                </div>
+            `;
+
+        })
+        .join("");
+}
+
+
+/* =========================================================
+   TICKETS
+========================================================= */
+
+async function loadTickets(silent = false) {
+
+    try {
+
+        const data = await apiFetch("/api/tickets");
+
+        tickets =
+            Array.isArray(data)
+                ? data
+                : data.tickets || [];
+
+        renderTickets();
+
+        if (!silent) {
+            renderAllTickets();
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        const html = `
+            <div class="empty">
+                <div class="empty-icon">⚠️</div>
+                <p>Unable to load tickets.</p>
+            </div>
+        `;
+
+        document.getElementById("recentTickets").innerHTML = html;
+        document.getElementById("allTickets").innerHTML = html;
+
+    }
+
+}
+
+
+function renderTickets() {
+
+    const recent =
+        tickets.slice(0, 6);
+
+    const container =
+        document.getElementById("recentTickets");
+
+    if (!recent.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🎫</div>
+                <p>No tickets submitted yet.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        recent.map(ticketRowHTML).join("");
+
+}
+
+
+function renderAllTickets() {
+
+    const search =
+        document.getElementById("ticketSearch")?.value
+        ?.toLowerCase() || "";
+
+    const status =
+        document.getElementById("statusFilter")?.value || "";
+
+    const priority =
+        document.getElementById("priorityFilter")?.value || "";
+
+    let filtered = tickets.filter(ticket => {
+
+        const text = `
+            ${ticket.id || ""}
+            ${ticket.title || ""}
+            ${ticket.description || ""}
+            ${ticket.category || ""}
+        `.toLowerCase();
+
+        const matchesSearch =
+            !search || text.includes(search);
+
+        const matchesStatus =
+            !status ||
+            String(ticket.status || "").toLowerCase() ===
+            status.toLowerCase();
+
+        const matchesPriority =
+            !priority ||
+            String(ticket.priority || "").toLowerCase() ===
+            priority.toLowerCase();
+
+        return matchesSearch &&
+               matchesStatus &&
+               matchesPriority;
+
+    });
+
+    const container =
+        document.getElementById("allTickets");
+
+    if (!filtered.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🔎</div>
+                <p>No tickets match your filters.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        filtered.map(ticketRowHTML).join("");
+
+}
+
+
+function filterTickets() {
+    renderAllTickets();
+}
+
+
+function ticketRowHTML(ticket) {
+
+    const status =
+        ticket.status || "Open";
+
+    const priority =
+        ticket.priority || "Medium";
+
+    const statusClass =
+        status.toLowerCase().includes("resolved")
+            ? "badge-resolved"
+            : status.toLowerCase().includes("escalated")
+                ? "badge-escalated"
+                : "badge-open";
+
+    const priorityClass =
+        priority.toLowerCase() === "high"
+            ? "badge-high"
+            : priority.toLowerCase() === "low"
+                ? "badge-low"
+                : "badge-medium";
+
+    const id =
+        ticket.id ||
+        ticket.ticket_id ||
+        "—";
+
+    return `
+
+        <div
+            class="ticket-row"
+            onclick="openTicket('${escapeAttribute(id)}')">
+
+            <div class="ticket-main">
+
+                <div style="flex:1;">
+
+                    <div class="ticket-title">
+                        ${escapeHTML(ticket.title || "Untitled issue")}
+                    </div>
+
+                    <div class="ticket-id">
+                        Ticket ${escapeHTML(id)}
+                    </div>
+
+                    <div class="ticket-description">
+                        ${escapeHTML(
+                            truncate(
+                                ticket.description || "No description",
+                                180
+                            )
+                        )}
+                    </div>
+
+                    <div class="ticket-meta">
+
+                        <span class="badge ${statusClass}">
+                            ${escapeHTML(status)}
+                        </span>
+
+                        <span class="badge ${priorityClass}">
+                            ${escapeHTML(priority)} Priority
+                        </span>
+
+                        ${
+                            ticket.category
+                            ? `
+                                <span class="badge badge-open">
+                                    ${escapeHTML(ticket.category)}
+                                </span>
+                            `
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+
+                <div style="
+                    color:#9aa6b6;
+                    font-size:12px;
+                    white-space:nowrap;
+                ">
+                    ${formatDate(ticket.created_at)}
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   TICKET DETAILS
+========================================================= */
+
+function openTicket(id) {
+
+    const ticket =
+        tickets.find(
+            t => String(t.id || t.ticket_id) === String(id)
+        );
+
+    if (!ticket) return;
+
+    document.getElementById("modalTitle").textContent =
+        ticket.title || "Ticket Details";
+
+    document.getElementById("modalBody").innerHTML = `
+
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <div class="detail-label">Ticket ID</div>
+                <div class="detail-value">
+                    ${escapeHTML(id)}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Status</div>
+                <div class="detail-value">
+                    ${escapeHTML(ticket.status || "Open")}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Category</div>
+                <div class="detail-value">
+                    ${escapeHTML(ticket.category || "Other")}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Priority</div>
+                <div class="detail-value">
+                    ${escapeHTML(ticket.priority || "Medium")}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Department</div>
+                <div class="detail-value">
+                    ${escapeHTML(ticket.department || "—")}
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-label">Device</div>
+                <div class="detail-value">
+                    ${escapeHTML(ticket.device || "—")}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div style="margin-top:20px;">
+
+            <div class="detail-label">
+                Description
+            </div>
+
+            <div style="
+                margin-top:7px;
+                font-size:14px;
+                line-height:1.7;
+                color:#435269;
+            ">
+                ${escapeHTML(ticket.description || "—")}
+            </div>
+
+        </div>
+
+
+        ${
+            ticket.ai_response
+            ? `
+                <div class="ai-response">
+
+                    <h4>✦ AI Assistant Response</h4>
+
+                    <p>
+                        ${escapeHTML(ticket.ai_response)}
+                    </p>
+
+                </div>
+            `
+            : ""
+        }
+
+    `;
+
+    document
+        .getElementById("ticketModal")
+        .classList.add("show");
+
+}
+
+
+function closeModal() {
+
+    document
+        .getElementById("ticketModal")
+        .classList.remove("show");
+
+}
+
+
+document
+    .getElementById("ticketModal")
+    .addEventListener("click", event => {
+
+        if (event.target.id === "ticketModal") {
+            closeModal();
+        }
+
+    });
+
+
+/* =========================================================
+   SUBMIT TICKET
+========================================================= */
+
+document
+    .getElementById("ticketForm")
+    .addEventListener("submit", async event => {
+
+        event.preventDefault();
+
+        const title =
+            document.getElementById("ticketTitle").value.trim();
+
+        const description =
+            document.getElementById("ticketDescription").value.trim();
+
+        const department =
+            document.getElementById("ticketDepartment").value;
+
+        const device =
+            document.getElementById("ticketDevice").value;
+
+        const priority =
+            document.getElementById("ticketPriority").value;
+
+        if (!title || !description) {
+
+            showToast("Please enter the title and description.");
+
+            return;
+        }
+
+        const button =
+            event.target.querySelector("button[type=submit]");
+
+        button.disabled = true;
+        button.textContent = "Submitting...";
+
+        try {
+
+            const payload = {
+                title,
+                description,
+                department,
+                device
+            };
+
+            if (priority !== "Auto") {
+                payload.priority = priority;
+            }
+
+            await apiFetch("/api/tickets", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+
+            showToast(
+                "Ticket submitted successfully."
+            );
+
+            event.target.reset();
+
+            await loadDashboard();
+
+            showPage("tickets");
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                "Unable to submit ticket. Check the backend."
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Submit Ticket";
+
+        }
+
+    });
+
+
+/* =========================================================
+   AI CHAT
+========================================================= */
+
+function addMessage(role, text) {
+
+    const container =
+        document.getElementById("chatMessages");
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        "message " + (role === "user" ? "user" : "");
+
+    message.innerHTML = `
+
+        <div class="message-avatar">
+            ${role === "user" ? "KG" : "✦"}
+        </div>
+
+        <div class="message-bubble">
+            ${escapeHTML(text)}
+        </div>
+
+    `;
+
+    container.appendChild(message);
+
+    container.scrollTop =
+        container.scrollHeight;
+
+}
+
+
+async function sendMessage() {
+
+    const input =
+        document.getElementById("chatInput");
+
+    const text =
+        input.value.trim();
+
+    if (!text) return;
+
+    addMessage("user", text);
+
+    input.value = "";
+
+    chatHistory.push({
+        role: "user",
+        content: text
+    });
+
+    const button =
+        document.getElementById("sendButton");
+
+    button.disabled = true;
+
+    button.textContent = "…";
+
+    try {
+
+        const data =
+            await apiFetch("/api/chat", {
+                method: "POST",
+                body: JSON.stringify({
+                    message: text
+                })
+            });
+
+        const reply =
+            data.reply ||
+            data.response ||
+            data.message ||
+            "I couldn't generate a response.";
+
+        addMessage("assistant", reply);
+
+        chatHistory.push({
+            role: "assistant",
+            content: reply
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        addMessage(
+            "assistant",
+            "I couldn't connect to the helpdesk service. Please check that the backend is running on port 8000."
+        );
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "➤";
+
+    }
+
+}
+
+
+function useSuggestion(text) {
+
+    document.getElementById("chatInput").value =
+        text;
+
+    document.getElementById("chatInput").focus();
+
+}
+
+
+function newChat() {
+
+    chatHistory = [];
+
+    document.getElementById("chatMessages").innerHTML = `
+
+        <div class="message">
+
+            <div class="message-avatar">
+                ✦
+            </div>
+
+            <div class="message-bubble">
+
+                <strong>New conversation started.</strong><br><br>
+
+                Tell me about your IT issue and I'll help you troubleshoot it.
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* Enter key */
+
+document
+    .getElementById("chatInput")
+    .addEventListener("keydown", event => {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    });
+
+
+/* =========================================================
+   KNOWLEDGE BASE
+========================================================= */
+
+async function loadKB() {
+
+    try {
+
+        const data =
+            await apiFetch("/api/kb");
+
+        kbArticles =
+            Array.isArray(data)
+                ? data
+                : data.articles ||
+                  data.items ||
+                  [];
+
+        renderKB();
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("kbGrid").innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ⚠️
+                </div>
+
+                <p>
+                    Unable to load the knowledge base.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+function renderKB() {
+
+    const search =
+        document
+            .getElementById("kbSearch")
+            .value
+            .toLowerCase();
+
+    const filtered =
+        kbArticles.filter(article => {
+
+            const text = `
+                ${article.id || ""}
+                ${article.title || ""}
+                ${article.body || ""}
+                ${article.category || ""}
+            `.toLowerCase();
+
+            return !search ||
+                   text.includes(search);
+
+        });
+
+    const container =
+        document.getElementById("kbGrid");
+
+    if (!filtered.length) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🔎
+                </div>
+
+                <p>
+                    No knowledge-base articles found.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        filtered.map(article => `
+
+            <article class="kb-card">
+
+                <div class="kb-id">
+                    ${escapeHTML(article.id || "KB")}
+                </div>
+
+                <h3>
+                    ${escapeHTML(article.title || "Untitled")}
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        truncate(
+                            article.body || "",
+                            260
+                        )
+                    )}
+                </p>
+
+                ${
+                    article.category
+                    ? `
+                        <span class="kb-category">
+                            ${escapeHTML(article.category)}
+                        </span>
+                    `
+                    : ""
+                }
+
+            </article>
+
+        `).join("");
+
+}
+
+
+function filterKB() {
+    renderKB();
+}
+
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function truncate(text, length) {
+
+    if (!text) return "";
+
+    return text.length > length
+        ? text.substring(0, length) + "..."
+        : text;
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function escapeAttribute(value) {
+
+    return String(value ?? "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
+
+}
+
+
+function formatDate(value) {
+
+    if (!value) return "";
+
+    const date =
+        new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleDateString(
+        undefined,
+        {
+            day: "2-digit",
+            month: "short"
+        }
+    );
+
+}
+
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+async function initialize() {
+
+    await loadDashboard();
+
+    try {
+        await loadKB();
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+
+
+initialize();
+
+</script>
+
+</body>
+</html>
