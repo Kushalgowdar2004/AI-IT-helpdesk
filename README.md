@@ -3,7 +3,34 @@
 A responsive employee helpdesk portal backed by FastAPI, SQLAlchemy, SQLite, TF-IDF/cosine RAG, and a deterministic local assistant. Anthropic is optional and disabled by default.
 
 ## Run on Windows
-
+AI_IT_Helpdesk_Improved/
+│
+├── .gitignore
+├── .python-version
+├── README.md
+│
+├── backend/
+│   │
+│   ├── requirements.txt
+│   │
+│   └── app/
+│       │
+│       ├── __init__.py
+│       ├── main.py
+│       ├── models.py
+│       ├── schemas.py
+│       ├── database.py
+│       │
+│       ├── ai_pipeline.py
+│       ├── rag.py
+│       ├── seed_kb.py
+│       │
+│       └── knowledge_base/
+│           └── *.md
+│
+└── frontend/
+    │
+    └── index.html
 ### Backend
 ```powershell
 cd backend
@@ -12,6 +39,63 @@ venv\Scripts\activate
 python -m pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --port 8000
 ```
+
+🧩 Backend Components
+main.py
+
+Main FastAPI application.
+
+It provides API endpoints for:
+
+Health checking
+Knowledge-base articles
+Ticket creation
+Ticket listing
+Individual ticket retrieval
+AI assistant communication
+Helpdesk metrics
+
+The application also initializes the database and builds the knowledge-base index during startup.
+
+models.py
+
+Contains SQLAlchemy database models for the application's persistent data.
+
+The database stores information such as:
+
+Tickets
+Knowledge-base articles
+Ticket/knowledge-base relationships
+schemas.py
+
+Contains Pydantic request and response schemas used to validate API requests and responses.
+
+database.py
+
+Handles:
+
+SQLite database configuration
+SQLAlchemy engine
+Database sessions
+Database dependencies
+ai_pipeline.py
+
+Contains the AI processing pipeline used for:
+
+Ticket analysis
+Categorization
+Priority determination
+Troubleshooting response generation
+AI-assisted resolution
+rag.py
+
+Implements the knowledge retrieval functionality.
+
+The RAG system retrieves relevant knowledge-base articles before the AI processing stage.
+
+seed_kb.py
+
+Loads and seeds the IT knowledge-base content into the database.
 
 ### Frontend
 Open a second terminal:
@@ -40,3 +124,23 @@ The assistant is local-first. `ENABLE_ANTHROPIC=false` means no external API cal
 ## Expanded knowledge base
 
 The improved version contains 53 KB articles across Network, Hardware, Windows & OS, Software, Access & Accounts, Email & Collaboration, and Security. Existing databases are upgraded by inserting only missing KB IDs, so restarting the backend does not duplicate existing articles.
+
+📌 Current Project Status
+Implemented
+ Responsive IT Helpdesk dashboard
+ AI Assistant interface
+ Suggested IT questions
+ Ticket submission
+ Ticket management
+ Ticket status handling
+ AI-assisted ticket analysis
+ Priority classification
+ Knowledge-base retrieval
+ 53 knowledge-base articles
+ SQLite database
+ SQLAlchemy ORM
+ FastAPI backend
+ REST APIs
+ Swagger API documentation
+ Netlify frontend deployment
+ Render backend deployment
